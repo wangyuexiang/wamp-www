@@ -1,25 +1,13 @@
 <?php 
-
-    // First we execute our common code to connection to the database and start the session 
     require("config.php"); 
-     
-    // This if statement checks to determine whether the registration form has been submitted 
-    // If it has, then the registration code is run, otherwise the form is displayed 
-    if(!empty($_POST)) 
-    { 
-        // Ensure that the user has entered a non-empty username 
-        if(empty($_POST['username'])) 
-        { 
-            // Note that die() is generally a terrible way of handling user errors 
-            // like this.  It is much better to display the error with the form 
-            // and allow the user to correct their mistake.  However, that is an 
-            // exercise for you to implement yourself. 
+
+    if(!empty($_POST)) { 
+        if(empty($_POST['username'])) { 
             die("Please enter a username."); 
         } 
          
         // Ensure that the user has entered a non-empty password 
-        if(empty($_POST['password'])) 
-        { 
+        if(empty($_POST['password'])) { 
             die("Please enter a password."); 
         } 
          
@@ -27,86 +15,40 @@
         // filter_var is a useful PHP function for validating form input, see: 
         // http://us.php.net/manual/en/function.filter-var.php 
         // http://us.php.net/manual/en/filter.filters.php 
-        if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) 
-        { 
+        if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) { 
             die("Invalid E-Mail Address"); 
         } 
          
-        // We will use this SQL query to see whether the username entered by the 
-        // user is already in use.  A SELECT query is used to retrieve data from the database. 
-        // :username is a special token, we will substitute a real value in its place when 
-        // we execute the query. 
-        $query = " 
-            SELECT 
-                1 
-            FROM users 
-            WHERE 
-                username = :username 
-        "; 
+        $query = " SELECT  1 FROM users  WHERE  username = :username "; 
+        $query_params = array( ':username' => $_POST['username'] ); 
          
-        // This contains the definitions for any special tokens that we place in 
-        // our SQL query.  In this case, we are defining a value for the token 
-        // :username.  It is possible to insert $_POST['username'] directly into 
-        // your $query string; however doing so is very insecure and opens your 
-        // code up to SQL injection exploits.  Using tokens prevents this. 
-        // For more information on SQL injections, see Wikipedia: 
-        // http://en.wikipedia.org/wiki/SQL_Injection 
-        $query_params = array( 
-            ':username' => $_POST['username'] 
-        ); 
-         
-        try 
-        { 
-            // These two statements run the query against your database table. 
+        try { 
             $stmt = $db->prepare($query); 
             $result = $stmt->execute($query_params); 
         } 
-        catch(PDOException $ex) 
-        { 
-            // Note: On a production website, you should not output $ex->getMessage(). 
-            // It may provide an attacker with helpful information about your code.  
+        catch(PDOException $ex) { 
             die("Failed to run query: " . $ex->getMessage()); 
         } 
          
-        // The fetch() method returns an array representing the "next" row from 
-        // the selected results, or false if there are no more rows to fetch. 
         $row = $stmt->fetch(); 
-         
-        // If a row was returned, then we know a matching username was found in 
-        // the database already and we should not allow the user to continue. 
-        if($row) 
-        { 
+        if($row) { 
             die("This username is already in use"); 
-        } 
+        }
+
+        $query = " SELECT 1 FROM users WHERE email = :email ";  
+        $query_params = array( ':email' => $_POST['email'] ); 
          
-        // Now we perform the same type of check for the email address, in order 
-        // to ensure that it is unique. 
-        $query = " 
-            SELECT 
-                1 
-            FROM users 
-            WHERE 
-                email = :email 
-        "; 
-         
-        $query_params = array( 
-            ':email' => $_POST['email'] 
-        ); 
-         
-        try 
-        { 
+        try { 
             $stmt = $db->prepare($query); 
             $result = $stmt->execute($query_params); 
         } 
-        catch(PDOException $ex) 
-        { 
+        catch(PDOException $ex) { 
             die("Failed to run query: " . $ex->getMessage()); 
         } 
          
         $row = $stmt->fetch(); 
          
-        if($row) 
-        { 
+        if($row) { 
             die("This email address is already registered"); 
         } 
          
@@ -164,25 +106,15 @@
             ':email' => $_POST['email'] 
         ); 
          
-        try 
-        { 
-            // Execute the query to create the user 
+        try { 
             $stmt = $db->prepare($query); 
             $result = $stmt->execute($query_params); 
         } 
-        catch(PDOException $ex) 
-        { 
-            // Note: On a production website, you should not output $ex->getMessage(). 
-            // It may provide an attacker with helpful information about your code.  
+        catch(PDOException $ex) { 
             die("Failed to run query: " . $ex->getMessage()); 
         } 
          
-        // This redirects the user back to the login page after they register 
         header("Location: login.php"); 
-         
-        // Calling die or exit after performing a redirect using the header function 
-        // is critical.  The rest of your PHP script will continue to execute and 
-        // will be sent to the user if you do not die or exit. 
         die("Redirecting to login.php"); 
     } 
      
