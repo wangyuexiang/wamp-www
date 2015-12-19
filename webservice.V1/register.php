@@ -9,7 +9,7 @@
 		}
 		
 		// verify if username already exists
-		$query = "select 1 rom users where username = :user";
+		$query = "select 1 from users where username = :user";
 		$query_params = array(':user' => $_POST['username']);
 		
 		try{

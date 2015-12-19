@@ -13,19 +13,19 @@
 		die(json_encode($response));
 	}
 	
-	$row = $stmt -> fetchAll();
+	$rows = $stmt -> fetchAll();
 	
-	if($row){
+	if($rows){
 		$response["success"] = 1;
 		$response["message"] = "Post Available!";
 		$response["posts"] = array();
 		
-		foreach($row as $row){
+		foreach($rows as $row){
 			$post = array();
 			$post["post_id"] = $row["post_id"];
 			$post["username"] = $row["username"];
 			$post["title"] = $row["title"];
-			$post["message"] = $row["lessage"];
+			$post["message"] = $row["message"];
 			
 			array_push($response["posts"], $post);
 		}
