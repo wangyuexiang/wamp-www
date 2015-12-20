@@ -18,7 +18,8 @@ $response = array();
     // $description = $_POST['description'];
  
  if(!empty($_POST)){
-	 if(empty($_POST['name'])){
+	 if(empty($_POST['name']))
+	 {
 		 $response["success"]=0;
 		 $response["message"]="Please Enter the Product Name.";
 		 die(json_encode($response));
@@ -26,10 +27,10 @@ $response = array();
 
  
  		$query = "INSERT INTO products(name, price, description) VALUES(:name, :price, :description)";
-		$query_pqrqms = array(
-			':name' => $_POST['name'];
-			':price' => $_POST['price'];
-			':description' => $_POST['description'];
+		$query_params = array(
+			':name' => $_POST['name'],
+			':price' => $_POST['price'],
+			':description' => $_POST['description']
 		);
 		
     // include db connect class
@@ -42,7 +43,7 @@ $response = array();
     // $result = mysql_query("INSERT INTO products(name, price, description) VALUES('$name', '$price', '$description')");
 
 		$stmt = $db->prepare($query);
-		$stmt -> execute();
+		$stmt -> execute($query_params);
     $result = $stmt -> fetchAll();
  
     // check if row inserted or not
