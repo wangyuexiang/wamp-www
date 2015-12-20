@@ -9,23 +9,24 @@
 $response = array();
  
 // include db connect class
-require_once __DIR__ . '/db_connect.php';
- 
-// connecting to db
-$db = new DB_CONNECT();
- 
+require("config.php") ;
+
 // check for post data
 if (isset($_GET["pid"])) {
     $pid = $_GET['pid'];
  
     // get a product from products table
-    $result = mysql_query("SELECT *FROM products WHERE pid = $pid");
- 
+    // $result = mysql_query("SELECT *FROM products WHERE pid = $pid");
+		$query = "SELECT *FROM products WHERE pid = $pid";
+		$stmt = $db->prepare($query);
+		$stmt -> execute();
+    $result = $stmt -> fetchAll();
+		
     if (!empty($result)) {
         // check for empty result
-        if (mysql_num_rows($result) > 0) {
- 
-            $result = mysql_fetch_array($result);
+        // if (mysql_num_rows($result) > 0) {
+					foreach($result as $result){
+						// $result = mysql_fetch_array($result);
  
             $product = array();
             $product["pid"] = $result["pid"];
@@ -42,8 +43,11 @@ if (isset($_GET["pid"])) {
  
             array_push($response["product"], $product);
  
+					}
+ 
+            
             // echoing JSON response
-            echo json_encode($response);
+			echo json_encode($response);}
         } else {
             // no product found
             $response["success"] = 0;

@@ -3,7 +3,7 @@
 	
 	if(!empty($_POST)){
 		if(empty($_POST['username']) || empty($_POST['password'])){
-			$reponse["success"] = 0;
+			$response["success"] = 0;
 			$response["message"] = "Please Enter Both a Username and Password.";
 			die(json_encode($response));
 		}

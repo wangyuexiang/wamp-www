@@ -1,10 +1,10 @@
 <?php
  
-/*
- * Following code will delete a product from table
- * A product is identified by product id (pid)
- */
- 
+// Following code will delete a product from table
+// A product is identified by product id (pid)
+
+	require('config.php');
+	
 // array for JSON response
 $response = array();
  
@@ -12,14 +12,10 @@ $response = array();
 if (isset($_POST['pid'])) {
     $pid = $_POST['pid'];
  
-    // include db connect class
-    require_once __DIR__ . '/db_connect.php';
- 
-    // connecting to db
-    $db = new DB_CONNECT();
- 
     // mysql update row with matched pid
-    $result = mysql_query("DELETE FROM products WHERE pid = $pid");
+		$query = "DELETE FROM products WHERE pid = $pid";
+		$stmt = $db -> prepare($query);
+    $result = $stmt -> execute();
  
     // check if row deleted or not
     if (mysql_affected_rows() > 0) {

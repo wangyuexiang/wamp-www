@@ -1,10 +1,7 @@
 <?php
  
-/*
- * Following code will update a product information
- * A product is identified by product id (pid)
- */
- 
+// A product is identified by product id (pid)
+ 	require('config.php');
 // array for JSON response
 $response = array();
  
@@ -16,14 +13,10 @@ if (isset($_POST['pid']) && isset($_POST['name']) && isset($_POST['price']) && i
     $price = $_POST['price'];
     $description = $_POST['description'];
  
-    // include db connect class
-    require_once __DIR__ . '/db_connect.php';
- 
-    // connecting to db
-    $db = new DB_CONNECT();
- 
     // mysql update row with matched pid
-    $result = mysql_query("UPDATE products SET name = '$name', price = '$price', description = '$description' WHERE pid = $pid");
+		$query = "UPDATE products SET name = '$name', price = '$price', description = '$description' WHERE pid = $pid";
+		$stmt = $db -> prepare($query);
+    $result = $stmt -> execute();
  
     // check if row inserted or not
     if ($result) {
